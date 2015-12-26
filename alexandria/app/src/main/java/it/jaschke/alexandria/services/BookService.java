@@ -2,8 +2,11 @@ package it.jaschke.alexandria.services;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
@@ -159,14 +162,16 @@ public class BookService extends IntentService {
         final String IMG_URL = "thumbnail";
 
         try {
-            if (bookJsonString == null) {
+            // Check if internet is connected
+            // If internet is not connected, show a toast message
+            // else load the data
+            if (!isInternetConnected(getApplicationContext())) {
                 new Handler(getApplicationContext().getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getBaseContext(), "No internet Connection", Toast.LENGTH_SHORT).show();
                     }
                 });
-
                 stopSelf();
             } else {
                 JSONObject bookJson = new JSONObject(bookJsonString);
@@ -242,5 +247,21 @@ public class BookService extends IntentService {
             getContentResolver().insert(AlexandriaContract.CategoryEntry.CONTENT_URI, values);
             values = new ContentValues();
         }
+    }
+
+    /**
+     * Method to get internet connection status
+     *
+     * @param context Context of the current activity
+     * @return true if {@link java.lang.Boolean} internet connection is established else false
+     */
+    public boolean isInternetConnected(Context context) {
+        boolean isConnected;
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        isConnected = (activeNetwork != null)
+                && (activeNetwork.isConnectedOrConnecting());
+        return isConnected;
     }
 }
