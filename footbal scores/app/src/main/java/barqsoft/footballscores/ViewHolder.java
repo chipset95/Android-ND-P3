@@ -24,5 +24,7 @@ public class ViewHolder
         date      = (TextView) view.findViewById(R.id.data_textview);
         home_crest = (ImageView) view.findViewById(R.id.home_crest);
         away_crest = (ImageView) view.findViewById(R.id.away_crest);
+        home_crest.setContentDescription(null);
+        away_crest.setContentDescription(null);
     }
 }
