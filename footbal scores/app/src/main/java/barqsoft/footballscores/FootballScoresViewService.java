@@ -1,9 +1,9 @@
 package barqsoft.footballscores;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -71,9 +71,12 @@ public class FootballScoresViewService extends RemoteViewsService {
                 views.setTextViewText(R.id.away_name, mCursor.getString(COL_AWAY));
                 views.setTextViewText(R.id.data_textview, utilies.getLeague(mCursor.getInt(COL_LEAGUE)));
                 views.setTextViewText(R.id.score_textview, utilies.getScores(mCursor.getInt(COL_HOME_GOALS), mCursor.getInt(COL_AWAY_GOALS)));
-                Intent toActivity = new Intent(mContext, MainActivity.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, toActivity, 0);
-                views.setOnClickPendingIntent(R.id.widget_list_item, pendingIntent);
+
+                Bundle extras = new Bundle();
+                extras.putInt(FootballScoreAppWidgetProvider.EXTRA_ITEM, position);
+                Intent fillInIntent = new Intent();
+                fillInIntent.putExtras(extras);
+                views.setOnClickFillInIntent(R.id.widget_list_item, fillInIntent);
 
                 mCursor.moveToNext();
             }
